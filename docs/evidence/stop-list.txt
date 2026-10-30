@@ -1,0 +1,5 @@
+  code  name                         rep        credit limit   owing         not yet invoiced  headroom       over 30 days  days overdue  status  flag                  
+  ----  ---------------------------  ---------  -------------  ------------  ----------------  -------------  ------------  ------------  ------  ----------------------
+  POH   Pohutukawa Landscapes        Mere Tane  NZD 5,000.00   NZD 5,548.18  NZD 0.00          NZD -548.18    NZD 5,548.18            40  open    over limit            
+  TUI   Tui Construction Ltd         Jono Reid  NZD 30,000.00  NZD 0.00      NZD 36,300.90     NZD -6,300.90  NZD 0.00                 0  open    over limit            
+  SDF   Stonefield Decks and Fences  Jono Reid  NZD 10,000.00  NZD 2,581.18  NZD 2,158.32      NZD 5,260.50   NZD 2,581.18            71  open    overdue past stop line

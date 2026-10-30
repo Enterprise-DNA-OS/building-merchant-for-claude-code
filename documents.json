@@ -1,11 +1,48 @@
 [
   {
-    "name": "example",
-    "title": "TODO(author): the first document this industry must produce",
-    "for_each": "select gen_random_uuid() as id, 'Example' as name",
-    "file": "name",
+    "name": "trade-statement",
+    "title": "Trade account statement",
+    "for_each": "select a.id, a.code || ' ' || a.name as label from merchant.accounts a where a.kind = 'trade' and exists (select 1 from merchant.invoice_balance i where i.account_id = a.id and i.status = 'open' and i.owing_cents > 0) order by a.code",
+    "file": "label",
     "sections": [
-      { "title": "Details", "sql": "select 'replace me' as item, $1::text as record_id" }
+      { "title": "Account", "layout": "record", "sql": "select a.code account, a.name, a.billing_address, a.business_number, 'Due the ' || a.terms_day || 'th of the month after invoice' terms, current_date statement_date from merchant.accounts a where a.id = $1" },
+      { "title": "Open invoices", "sql": "select code invoice, issued_on, due_on, total_cents, paid_cents, owing_cents, days_overdue from merchant.invoice_balance where account_id = $1 and status = 'open' and owing_cents > 0 order by due_on" },
+      { "title": "Ageing", "layout": "record", "sql": "select current_cents, overdue_1_30_cents, overdue_31_60_cents, overdue_60_plus_cents, balance_cents total_due_cents from merchant.account_position where id = $1" },
+      { "title": "Retention of title", "note": "Goods supplied on account remain our property until paid for in full, under the terms of your signed credit application. Amounts include GST.", "sql": "select ppsr_registered_on security_registered_on, ppsr_expires_on registration_expires_on from merchant.accounts where id = $1" }
+    ]
+  },
+  {
+    "name": "quote",
+    "title": "Quote",
+    "for_each": "select q.id, q.code || ' ' || a.name as label from merchant.quotes q join merchant.accounts a on a.id = q.account_id where q.status = 'open' order by q.code",
+    "file": "label",
+    "sections": [
+      { "title": "Quote", "layout": "record", "sql": "select q.code quote, a.name customer, j.name job, j.site_address site, q.quoted_on, q.valid_to, coalesce(q.rep, a.rep) quoted_by from merchant.quotes q join merchant.accounts a on a.id = q.account_id left join merchant.jobs j on j.id = q.job_id where q.id = $1" },
+      { "title": "Lines", "note": "Prices exclude GST. Treated timber is quoted for the end use shown; tell us if the use changes.", "sql": "select p.code, p.name, l.qty, p.unit, coalesce(p.treatment, '') treatment, coalesce(e.name, '') end_use, l.unit_cents, round(l.qty * l.unit_cents)::bigint line_cents from merchant.quote_lines l join merchant.products p on p.id = l.product_id left join merchant.end_uses e on e.code = l.end_use and e.jurisdiction = (select jurisdiction from merchant.settings) where l.quote_id = $1 order by l.created_at, p.code" },
+      { "title": "Total", "layout": "record", "sql": "select net_cents subtotal_cents, round(net_cents * (select gst_pct from merchant.settings) / 100)::bigint gst_cents, round(net_cents * (100 + (select gst_pct from merchant.settings)) / 100)::bigint total_cents from merchant.quote_value where id = $1" },
+      { "title": "Product information", "note": "Published information for designated building products on this quote.", "sql": "select p.code, p.name, coalesce(nullif(p.product_info_url, ''), 'ask us for it') product_information from merchant.quote_lines l join merchant.products p on p.id = l.product_id where l.quote_id = $1 and p.designated_product order by p.code" }
+    ]
+  },
+  {
+    "name": "delivery-docket",
+    "title": "Delivery docket",
+    "for_each": "select d.id, d.code || ' ' || d.run_on as label from merchant.deliveries d where d.status = 'scheduled' order by d.run_on, d.code",
+    "file": "label",
+    "sections": [
+      { "title": "Delivery", "layout": "record", "sql": "select db.code docket, db.run_on, db.slot, db.truck, db.order_code, o.po_ref, db.account, db.site, db.weight_kg from merchant.dispatch_board db join merchant.orders o on o.code = db.order_code where db.id = $1" },
+      { "title": "Load", "note": "Check every line off on unloading. Treated timber: keep the end tags on until it is fixed in place.", "sql": "select p.code, p.name, l.qty, p.unit, coalesce(p.treatment, '') treatment, round(l.qty * p.weight_kg, 1) weight_kg from merchant.order_lines l join merchant.products p on p.id = l.product_id join merchant.deliveries d on d.order_id = l.order_id where d.id = $1 order by p.category, p.code" },
+      { "title": "Received by", "layout": "record", "sql": "select '' name, '' signature, '' time from merchant.deliveries where id = $1" }
+    ]
+  },
+  {
+    "name": "tax-invoice",
+    "title": "Tax invoice",
+    "for_each": "select i.id, i.code || ' ' || a.name as label from merchant.invoices i join merchant.accounts a on a.id = i.account_id where i.status = 'open' order by i.code",
+    "file": "label",
+    "sections": [
+      { "title": "Invoice", "layout": "record", "sql": "select i.code invoice, i.issued_on date_of_supply, i.due_on, s.business_name supplier, a.name customer, coalesce(a.billing_address, case when i.total_cents > s.full_info_over_cents then 'ADDRESS REQUIRED' else '' end) customer_address, o.code order_code, o.po_ref from merchant.invoices i join merchant.accounts a on a.id = i.account_id left join merchant.orders o on o.id = i.order_id cross join merchant.settings s where i.id = $1" },
+      { "title": "Goods supplied", "sql": "select p.name description, l.qty, p.unit, l.unit_cents, round(l.qty * l.unit_cents)::bigint line_cents from merchant.order_lines l join merchant.products p on p.id = l.product_id join merchant.invoices i on i.order_id = l.order_id where i.id = $1 order by l.created_at, p.code" },
+      { "title": "Totals", "layout": "record", "sql": "select net_cents, gst_cents, total_cents total_including_gst_cents from merchant.invoices where id = $1" }
     ]
   }
 ]

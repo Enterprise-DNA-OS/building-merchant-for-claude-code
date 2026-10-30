@@ -1,0 +1,5 @@
+  code    account                   job                                rep        value          days since contact  validity             state  
+  ------  ------------------------  ---------------------------------  ---------  -------------  ------------------  -------------------  -------
+  Q-1002  Waipa Homes Ltd           Stage 2 subdivision, eight houses  Mere Tane  NZD 37,293.20                  38  expired 10 days ago  expired
+  Q-1004  Pohutukawa Landscapes     Ohaupo farm boundary fence         Mere Tane  NZD 6,370.20                    9  14 days left         chase  
+  Q-1001  Kauri Ridge Builders Ltd  Lot 12 Pukete deck and pergola     Mere Tane  NZD 2,350.32                   12  18 days left         chase  

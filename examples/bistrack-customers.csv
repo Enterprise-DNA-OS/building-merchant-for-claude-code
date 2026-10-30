@@ -1,0 +1,4 @@
+Customer Code,Customer Name,Credit Limit,Price Group,Branch,Sales Rep,Email,Phone,Address,NZBN,On Stop
+BT1001,Ruru Homes Ltd,"15,000.00",BUILDER,HAM,Mere Tane,accounts@ruruhomes.example,07 555 1001,"18 Clyde Street, Hamilton",9429000001001,No
+BT1002,Whio Fencing,5000,TRADE,TEA,Jono Reid,whio@fencing.example,027 555 1002,"2 Arapuni Road, Te Awamutu",,No
+BT1003,Kea Renovations,2500,TRADE,HAM,Jono Reid,kea@renos.example,021 555 1003,"9 Silverdale Road, Hamilton",,Yes

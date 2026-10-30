@@ -2,13 +2,34 @@
   {
     "name": "week",
     "title": "This week",
-    "subtitle": "Building Merchant for Claude Code: what needs attention, rendered by npm run view",
+    "subtitle": "Deliveries, quotes, credit and the rules, rendered by npm run view",
     "sections": [
-      {
-        "title": "Needs attention",
-        "note": "TODO(author): point this at the industry's attention view (overdue, stuck, quiet).",
-        "sql": "select 'replace me' as item, 'TODO(author)' as why"
-      }
+      { "title": "Today's delivery runs", "note": "Orders still open on a truck today need picking now.", "sql": "select code, slot, truck, order_code, account, site, weight_kg, status, order_status from merchant.dispatch_board where run_on = current_date order by slot, truck" },
+      { "title": "Truck loads, today on", "sql": "select run_on, slot, truck, drops, load_kg, capacity_kg, load_pct, flag from merchant.truck_load where run_on >= current_date order by run_on, slot, truck" },
+      { "title": "Quotes to chase", "note": "Gone quiet past the chase line, or past their validity. Biggest first.", "sql": "select code, account_name account, job, rep, value_cents, days_since_contact, state from merchant.quote_pipeline q, merchant.settings s where state in ('chase', 'expired') order by value_cents desc" },
+      { "title": "Credit watch", "sql": "select code, name, credit_limit_cents, balance_cents owing_cents, uninvoiced_cents, oldest_overdue_days, flag from merchant.credit_watch c, merchant.settings s where flag <> '' order by oldest_overdue_days desc" },
+      { "title": "Rule findings", "note": "Each rule and its source is in docs/compliance.md.", "sql": "select rule, severity, ref, subject, detail from merchant.compliance_findings order by severity = 'breach' desc, rule" }
+    ]
+  },
+  {
+    "name": "yard",
+    "title": "The yard",
+    "subtitle": "Stock by branch: short, to reorder, and tying up cash",
+    "sections": [
+      { "title": "Short or due to reorder", "note": "Available is on hand less what open orders at that branch need.", "sql": "select code, name, branch, unit, on_hand, committed, available, reorder_point, flag from merchant.stock_position where flag in ('SHORT', 'reorder') order by flag = 'SHORT' desc, code" },
+      { "title": "Slow stock", "sql": "select code, name, branch, on_hand, unit, stock_value_cents, last_sold_on, days_since_sale from merchant.stock_position p, merchant.settings s where flag = 'slow' order by stock_value_cents desc" },
+      { "title": "Prices under cost", "sql": "select kind, account, account_name, product, price_cents, cost_cents, margin_pct, cost_changed_on from merchant.price_floor p, merchant.settings s order by margin_pct" }
+    ]
+  },
+  {
+    "name": "accounts",
+    "title": "Trade accounts",
+    "subtitle": "Who owes what, who is buying less, and margin by account",
+    "sections": [
+      { "title": "Aged debtors", "sql": "select code, name, current_cents, overdue_1_30_cents, overdue_31_60_cents, overdue_60_plus_cents, balance_cents total_cents from merchant.account_position a, merchant.settings s where balance_cents > 0 order by overdue_60_plus_cents desc, balance_cents desc" },
+      { "title": "Buying less than they used to", "sql": "select code, name, rep, sales_prior_90_cents, sales_90_cents, last_order_on from merchant.account_position a, merchant.settings s where sales_prior_90_cents > 0 and sales_90_cents < sales_prior_90_cents * (100 - s.sales_drop_pct) / 100.0" },
+      { "title": "Margin by account, last 90 days", "sql": "select code, name, rep, price_level, orders, sales_cents, margin_cents, margin_pct from merchant.account_margin m, merchant.settings s order by margin_pct" },
+      { "title": "Reps, last 180 days", "sql": "select rep, quotes, won, lost, open, win_rate_pct, quoted_cents, won_cents, open_cents from merchant.rep_scorecard r, merchant.settings s order by won_cents desc" }
     ]
   }
 ]

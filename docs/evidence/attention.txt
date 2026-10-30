@@ -1,0 +1,25 @@
+  area      item               why                                                                     next                                                        
+  --------  -----------------  ----------------------------------------------------------------------  ------------------------------------------------------------
+  dispatch  D-7011             Kauri Ridge Builders Ltd on FD1 today and the order is not picked yet   pick it or rebook                                           
+  dispatch  FD1 2026-10-31 am  5448.0 kg on a 4000 kg truck                                            split the run                                               
+  credit    TUI                Tui Construction Ltd: NZD 36,300.90 owed and on order against a NZD...  hold new orders or raise the limit                          
+  credit    SDF                Stonefield Decks and Fences: overdue past stop line, oldest invoice...  /draft-overdue then decide /stop                            
+  credit    POH                Pohutukawa Landscapes: NZD 5,548.18 owed and on order against a NZD...  hold new orders or raise the limit                          
+  quotes    Q-1002             Waipa Homes Ltd, NZD 37,293.20, expired 10 days ago                     /draft-quote-chase                                          
+  quotes    Q-1004             Pohutukawa Landscapes, NZD 6,370.20, 9 days since contact               /draft-quote-chase                                          
+  quotes    Q-1001             Kauri Ridge Builders Ltd, NZD 2,350.32, 12 days since contact           /draft-quote-chase                                          
+  rules     quote Q-1001       treatment-for-use: DK14032-H31 140x32 pine weatherboard blank H3.1 ...  swap to the right treatment, or /set-use if the use is wrong
+  rules     quote Q-1006       treatment-for-use: PO100-H4 100x100 fence post H4 2.4m is H4; Retai...  swap to the right treatment, or /set-use if the use is wrong
+  rules     order O-5010       treatment-for-use: FR9045-H12 90x45 SG8 H1.2 framing is H1.2; Deck ...  swap to the right treatment, or /set-use if the use is wrong
+  rules     order O-5010       grade-for-structure: FR9045-UT 90x45 utility H1.2 framing has grade...  swap to stress-graded timber                                
+  rules     MAT                ppsr-missing: trade credit limit set and no security interest regis...  register a financing statement                              
+  rules     TUI                ppsr-missing: trade credit limit set and no security interest regis...  register a financing statement                              
+  rules     POH                ppsr-expiring: registration lapsed 15 days ago                          renew the registration                                      
+  rules     MAT                credit-application: credit limit set with no signed credit applicat...  get the credit application signed                           
+  rules     LVL24045           product-information: designated building product with no link to it...  add the product information link                            
+  rules     INV-5012           buyer-details: invoice over the threshold for full taxable supply i...  add the buyer's address                                     
+  rules     D-7013             stop-list-dispatch: delivery booked 2026-10-31 for an account that ...  hold the delivery or take payment first                     
+  rules     D-7012             stop-list-dispatch: delivery booked 2026-10-31 for an account that ...  hold the delivery or take payment first                     
+  stock     LVL24045 HAM       50 lm short for open orders                                             order it in or move it from another branch                  
+  pricing   HRK LVL24045       selling at NZD 22.90, -2.6% margin                                      /price to reset it                                          
+  accounts  WAH                Waipa Homes Ltd bought 97% less in the last 90 days                     rep to call                                                 

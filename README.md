@@ -40,11 +40,13 @@
 
 Building Merchant for Claude Code does the job you pay Epicor BisTrack for, as a Postgres database and a set of agent commands. There is no web front end. You open the folder in [Claude Code](https://claude.com/claude-code) (or Codex, OpenCode, Cursor: see `AGENTS.md`) and ask for what you want in plain language. It runs the right query, and it can answer questions the Epicor BisTrack dashboard cannot.
 
-<!-- TODO(author): the annual bill. One sentence: what a 10 to 50 person business typically pays Epicor BisTrack per year, all in, with a source. -->
+Epicor does not publish a BisTrack price. It is quoted by the modules you take, and G2 reviewers put a typical implementation at six months ([G2](https://www.g2.com/products/epicor-bistrack/pricing), [Software Advice](https://softwareadvice.com/scm/epicor-bistrack-profile/), checked 30 October 2026). In Epicor's own Verdon Timber case study, 45 of the merchant's 105 staff are BisTrack users ([Epicor](https://epicor.com/en-uk/resources/success-stories/building-supply/verdon-timber)). The free code still has hosting, agent and support costs.
 
 Want the same thing with a web front end, or built on a different stack? That is a customisation, and it is exactly what Enterprise DNA does: [book a call](https://enterprisedna.co/omni/book/?utm_source=github&utm_medium=readme&utm_campaign=bistrack).
 
-<!-- TODO(author): two or three sentences on what this specific product covers and who it is for. -->
+It is for owner-run timber yards, building supplies merchants and hardware trade counters in New Zealand and Australia with one to five branches. It keeps trade accounts with price levels, contract prices, credit limits and security registrations, builders' jobs and sites, quotes with the end use of every timber line, orders, delivery runs by truck and slot with load weights, stock by branch with what open orders have committed, invoices due on the account's terms day, payments and aged debtors. It checks every treated timber line against the hazard class its use needs, structural uses against a stress grade, trade credit against the Personal Property Securities Act, designated products against the New Zealand product information regulations, and large invoices against the GST record rules, with each rule cited in [docs/compliance.md](docs/compliance.md).
+
+The demo is a fictional two-branch Waikato merchant, Ridgeline Timber and Trade. It has decking quoted in H3.1 boards, utility-grade framing and H1.2 deck joists on an order going out this afternoon, H4 posts quoted for a retaining wall, a builder over their limit once open orders are counted, a fencing contractor more than 60 days overdue with a delivery booked tomorrow, a flatdeck loaded to 136%, an expired NZ$37,000 frame package nobody chased, an imported LVL beam selling under cost and short for orders, a lapsed and a lapsing security registration, a cash sale over NZ$1,000 with no address, and the key account that has quietly stopped buying.
 
 ## Why no front end
 
@@ -63,7 +65,16 @@ npm install
 npm run demo
 ```
 
-Then open the folder in Claude Code and type a slash command. <!-- TODO(author): name the first command to try. -->
+Then open the folder in Claude Code and type `/attention`. Follow it with `/morning-run`, `/stop-list` and `/treatment-check`.
+
+Or from the terminal:
+
+```bash
+npm test
+npm run merchant -- attention
+npm run view
+npm run docs
+```
 
 ### Use it with your own Postgres or Supabase
 
@@ -71,15 +82,90 @@ Copy `.env.example` to `.env`, set `DATABASE_URL`, then `npm run migrate`. Same 
 
 ## The commands
 
-<!-- TODO(author): a table of the slash commands in .claude/commands and what each one does. -->
-
 | Command | What it does |
 |---|---|
-| `/...` | ... |
+| `/account` | One trade account: position, open invoices, quotes, orders, contract prices, jobs, findings and notes. |
+| `/add` | Add branches, trucks, price levels, products, accounts or jobs from a JSON file. |
+| `/attention` | Everything that needs someone today across the yard, the counter and the office: drops not picked, failed deliveries, overloaded trucks, accounts over limit or past the stop line, quotes to chase, rule breaches, stock short for orders, prices under cost and builders buying less. |
+| `/compliance` | Check the records against the rules this industry lives under (the ones listed in docs/compliance.md) and report what is missing, late, or about to breach, with the rule cited. |
+| `/contact` | Log a call or email on a quote so it leaves the chase list. |
+| `/cost` | Record a supplier cost change, and see every contract price and level it pushes under cost. |
+| `/customise` | Make this system yours in plain language. |
+| `/debtors` | Aged debtors: current, 1 to 30, 31 to 60 and over 60 days, oldest first. |
+| `/deliver` | Mark a delivery done with who signed for it. |
+| `/dispatch` | The delivery runs for a day (today unless a date is given). |
+| `/documents` | Render the paperwork: trade statements, quotes, delivery dockets and tax invoices, in your brand. |
+| `/draft-overdue` | Draft an overdue reminder for one account, listing each overdue invoice. |
+| `/draft-quote-chase` | Draft a follow-up to the customer on one quote: what it covers, whether it has expired, and any line that needs a different treatment. |
+| `/draft-weekly` | Save the weekly review as a draft in drafts/. |
+| `/end-uses` | The end uses and the minimum hazard class each needs, with the source. |
+| `/export` | Write every record to one JSON file. |
+| `/fail` | Record a delivery that could not be made, with the reason, so it stays on the attention list until rebooked. |
+| `/import` | Bring customers or products across from an Epicor BisTrack export (a grid or report saved as CSV). |
+| `/invoice` | Invoice a delivered order (or a collected pickup), due on the account's terms day of the following month, with GST. |
+| `/loads` | Truck loads from today on: drops, kilograms against capacity, and runs that are overloaded. |
+| `/log` | Add a note to an account, quote, order, product, job or delivery. |
+| `/lose` | Close a quote as lost, with the reason. |
+| `/margins` | Margin by account over the last 90 days, lowest first. |
+| `/morning-run` | The morning dispatch check: today's drops by truck and slot, what is not picked yet, truck loads, and any drop booked for an account on stop. |
+| `/new-quote` | Price a quote for an account from product codes and quantities, at the account's contract or level price, with each timber line's end use so the treatment is checked. |
+| `/new-view` | Add a read-only HTML view (a dashboard page) from a plain-language description, rendered in the operator's brand by `npm run view`. |
+| `/order` | One order: lines, deliveries and findings. |
+| `/pay` | Record a payment against an invoice. |
+| `/price-floor` | Contract prices and price levels now selling under replacement cost. |
+| `/price` | Set or change an account's contract price for a product. |
+| `/product` | One product: stock by branch, price by level and margin, and the end uses its treatment allows. |
+| `/quote` | One quote: lines, prices, treatment against end use, findings and notes. |
+| `/quotes-to-chase` | Open quotes gone quiet past the chase line, or past their validity, biggest first. |
+| `/quotes` | Every open quote with value, margin, days since contact and state. |
+| `/receive` | Book stock in at a branch. |
+| `/reorder` | What to order in: lines short for open orders and lines at or under their reorder point. |
+| `/reps` | Rep scorecard for the last 180 days: quotes, won, lost, win rate and value. |
+| `/sales-drop` | Trade accounts buying much less than in the 90 days before: the builder who has gone to another merchant. |
+| `/schedule` | Book an order onto a truck, a day and a slot. |
+| `/set-use` | Record or correct the end use of a timber line on a quote or order, which re-runs the treatment check. |
+| `/slow` | Slow stock: on hand with no sale past the slow line, by value tied up. |
+| `/statements` | Month-end trade statements for every account with money owing, with ageing and the retention of title line. |
+| `/stock` | Stock by product and branch: on hand, committed to open orders, available, reorder point and days since last sale. |
+| `/stop-list` | The credit watch: accounts over their limit once open orders are counted, invoices past the stop line, and accounts already on stop. |
+| `/stop` | Put an account on stop with the reason, or release it. |
+| `/treatment-check` | Check every open quote and order line of treated timber against the hazard class its end use needs, and structural uses against a stress grade. |
+| `/weekly-review` | The Monday review, written from attention, quotes to chase, the stop list, rule checks, reorder and the rep scorecard. |
+| `/win` | Turn an accepted quote into an order with the same lines and prices. |
+
+Views (`npm run view`): `week` (runs, loads, quotes to chase, credit, rule findings), `yard` (short, reorder, slow stock, prices under cost), `accounts` (aged debtors, buying less, margin, reps). Documents (`npm run docs`): trade statements, quotes, delivery dockets, tax invoices, in your `brand.json`.
+
+## Ten questions BisTrack's screens do not answer
+
+Each one is a single question to Claude Code, answered from your own records today:
+
+1. Which treated timber on quotes and orders this week is below the hazard class its use needs, and what should it be instead?
+2. Which builders are over their credit limit once the orders not yet invoiced are counted, not just what they owe?
+3. Which trade accounts have credit and no security registration, and which registrations lapse in the next 90 days?
+4. Which quotes over NZ$5,000 have gone a week without a call, and whose are they?
+5. Which contract prices and price levels went under cost when the last supplier increase came through?
+6. Which builders bought less than half as much in the last 90 days as in the 90 before?
+7. Which truck runs tomorrow are over the truck's capacity, and which drop should move?
+8. What is short at each branch for orders already taken, as distinct from what is under its reorder point?
+9. What is our margin by account after contract prices, and which builder-level accounts earn less than trade?
+10. What is each rep's win rate, and what reasons do the lost quotes give?
 
 ## Instead of Epicor BisTrack
 
-<!-- TODO(author): how to bring data across from Epicor BisTrack; link docs/replace-bistrack.md -->
+Save your customer and product lists from BisTrack to CSV and run `/import`. [docs/replace-bistrack.md](docs/replace-bistrack.md) lists the column names the import reads, what carries over and what does not, and how to run both side by side for a month-end.
+
+## Your first hour: ten things to ask for
+
+1. "Set up our three branches and our trade price levels." (`/add`)
+2. "Import our customers and products from these BisTrack exports." (`/import`)
+3. "Put Ridgeline's name, logo and colours on the documents." (edit `brand.json`, then `npm run docs`)
+4. "What goes out on the trucks today, and is anything not picked?" (`/morning-run`)
+5. "Who should be on the stop list?" (`/stop-list`)
+6. "Which quotes should the reps call this week?" (`/quotes-to-chase`)
+7. "Check every treated timber line against its end use." (`/treatment-check`)
+8. "Pine went up 8% from Monday. What prices does that break?" (`/cost`)
+9. "Add a field for the builder's LBP number on each job." (`/customise`)
+10. "Give me a page I can print for the Monday meeting." (`/new-view`)
 
 ## Architecture
 

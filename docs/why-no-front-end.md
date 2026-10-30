@@ -13,12 +13,13 @@ That layer used to be the whole product, because talking to a database was hard.
 
 ## What you give up
 
-- **A visual board.** Stages are a table you ask about, not cards you drag.
-- **A phone app.** It runs where Claude Code runs.
-- **A vendor help desk.** This is open source. Enterprise DNA supports the installed version for businesses that want someone to call.
+- **A trade counter screen.** A point-of-sale terminal, EFTPOS and a receipt printer for walk-in cash sales are not here. Keep the counter system for that, or have Enterprise DNA connect one.
+- **Scanners in the yard.** Picking with a handheld scanner, and printing barcode labels, need a device and a screen. Delivery dockets print from `npm run docs` instead.
+- **A live driver app.** Drivers sign dockets on paper and the office records the delivery. A phone app with photos and signatures is a customisation.
+- **A vendor help desk.** This is open source. Enterprise DNA supports the installed version for merchants that want someone to call.
 
 ## Who this fits
 
-Small teams who already use Claude Code, or who would rather learn to ask than learn another interface. If your team needs a screen to look at all day, keep Epicor BisTrack. If you need the answers more than the screens, this is cheaper, faster and yours.
+Owner-run timber and building supplies merchants with one to five branches, where the owner, the trade reps and the credit controller would rather ask a question than run a report. If your counter staff need a till all day, keep one for that. The trade accounts, quotes, deliveries, credit and pricing, which is where the money is, sit better in a database you own and can ask anything.
 
 Installed and run for you: https://enterprisedna.co/omni/instead-of/bistrack
