@@ -52,6 +52,11 @@ export const READS = {
     case when designated_product then coalesce(nullif(product_info_url, ''), 'MISSING') else '' end product_info from merchant.products where active order by category, code`,
   'end-uses': `select e.code, e.name, e.min_treatment, e.needs_grade, e.source from merchant.end_uses e
     where e.jurisdiction = (select jurisdiction from merchant.settings) order by merchant.treatment_rank(e.min_treatment), e.code`,
+  'treatment-check': `select source || ' ' || ref ref, account, product, coalesce(treatment, 'untreated') treatment, coalesce(grade, '') grade, end_use,
+    case when coalesce(have_rank, -1) < need_rank then min_treatment || ' or higher' else '' end needs_treatment,
+    case when needs_grade and coalesce(grade, '') !~* '^(M?SG|MGP|F|LVL)\\s?\\d' then 'stress grade' else '' end needs_grade
+    from merchant.line_uses where end_use is not null and (coalesce(have_rank, -1) < need_rank or (needs_grade and coalesce(grade, '') !~* '^(M?SG|MGP|F|LVL)\\s?\\d'))
+    order by source desc, ref, product`,
   compliance: `select rule, severity, ref, subject, detail from merchant.compliance_findings order by severity = 'breach' desc, rule, ref`,
   orders: `select ov.code, a.name account, coalesce(j.name, '') job, ov.ordered_on, ov.required_on, ov.fulfilment, ${money('ov.net_cents')} value, ov.weight_kg, ov.status
     from merchant.order_value ov join merchant.accounts a on a.id = ov.account_id left join merchant.jobs j on j.id = ov.job_id

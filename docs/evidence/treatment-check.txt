@@ -1,0 +1,6 @@
+  ref           account  product      treatment  grade    end use       needs treatment  needs grade 
+  ------------  -------  -----------  ---------  -------  ------------  ---------------  ------------
+  quote Q-1001  KRB      DK14032-H31  H3.1                decking       H3.2 or higher               
+  quote Q-1006  MAT      PO100-H4     H4                  retaining     H5 or higher                 
+  order O-5010  KRB      FR9045-H12   H1.2       SG8      deck-framing  H3.2 or higher               
+  order O-5010  KRB      FR9045-UT    H1.2       Utility  framing                        stress grade

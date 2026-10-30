@@ -97,6 +97,7 @@ try {
   ok(has('buyer-details', 'INV-5012'), 'cash sale over the threshold with no address');
   ok(has('stop-list-dispatch', 'D-7012') && has('stop-list-dispatch', 'D-7013'), 'deliveries booked for stopped accounts');
   ok(!found.some((f) => ['quote Q-1004', 'quote Q-1005', 'order O-5009'].includes(f.ref)), 'correct timber raises nothing');
+  eq((await run(db, ['treatment-check'])).map((r) => `${r.ref}:${r.product}`).join(','), 'quote Q-1001:DK14032-H31,quote Q-1006:PO100-H4,order O-5010:FR9045-H12,order O-5010:FR9045-UT', 'treatment check lines');
   const att = await run(db, ['attention']);
   for (const a of ['dispatch', 'credit', 'quotes', 'rules', 'stock', 'pricing', 'accounts']) ok(att.some((i) => i.area === a), `attention covers ${a}`);
 
